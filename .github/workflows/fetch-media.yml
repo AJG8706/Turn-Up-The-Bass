@@ -1,0 +1,40 @@
+name: fetch-media
+on:
+  workflow_dispatch:
+    inputs:
+      manifest:
+        description: 'JSON array of {url, path} objects to download into the repo'
+        required: true
+        type: string
+permissions:
+  contents: write
+jobs:
+  fetch:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.ref_name }}
+      - name: Download files
+        env:
+          MANIFEST: ${{ inputs.manifest }}
+        run: |
+          echo "$MANIFEST" | python3 -c '
+          import json, os, sys, urllib.request
+          items = json.load(sys.stdin)
+          for it in items:
+              path = it["path"]
+              assert ".." not in path and not path.startswith("/"), path
+              os.makedirs(os.path.dirname(path) or ".", exist_ok=True)
+              req = urllib.request.Request(it["url"], headers={"User-Agent": "Mozilla/5.0"})
+              with urllib.request.urlopen(req, timeout=300) as r, open(path, "wb") as f:
+                  f.write(r.read())
+              print(path, os.path.getsize(path))
+          '
+      - name: Commit and push
+        run: |
+          git config user.name "media-relay[bot]"
+          git config user.email "media-relay@users.noreply.github.com"
+          git add -A
+          git diff --cached --quiet || git commit -m "Relay media into repo"
+          git push origin HEAD:${{ github.ref_name }}
