@@ -1,0 +1,12 @@
+name: unpublish
+on:
+  workflow_dispatch:
+permissions:
+  contents: write
+jobs:
+  unpublish:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Delete gh-pages deploy branch (unpublishes the Pages site)
+        run: git push origin --delete gh-pages
