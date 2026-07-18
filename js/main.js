@@ -25,7 +25,8 @@
     down:  { curve: [[0, 0.08], [0.15, 0.90], [0.5, 2.20], [1, 4.92]] }
   };
 
-  var EASE_PER_FRAME = 0.09;      // fraction of remaining distance per rAF
+  var EASE_PER_FRAME = 0.09;      // fraction of remaining distance per 60Hz frame
+  var lastTick = 0;               // for frame-rate-independent easing
   var DISSOLVE_MS = 250;          // pose crossfade duration
   var DOWN_ENTER = 0.75;          // cursor below 75% of viewport -> down pose
   var DOWN_EXIT = 0.50;           // must rise above 50% to come back up
@@ -127,6 +128,7 @@
   function seekIfNeeded(which, t) {
     var v = vids[which];
     if (!v.duration) return;
+    if (v.seeking) return; // let the in-flight seek land; avoids cancel storms
     var clamped = Math.min(Math.max(t, 0.02), v.duration - 0.06);
     if (Math.abs(v.currentTime - clamped) > frameDur()) {
       try { v.currentTime = clamped; } catch (e) { /* not seekable yet */ }
@@ -142,6 +144,11 @@
 
   function tick(now) {
     if (!state.ready) { requestAnimationFrame(tick); return; }
+
+    // 9% per 60Hz frame, scaled so a throttled rAF still eases in real time
+    var dt = lastTick ? Math.min(now - lastTick, 250) : 16.7;
+    lastTick = now;
+    var ease = 1 - Math.pow(1 - EASE_PER_FRAME, dt / 16.7);
 
     var targetX, wantPose;
 
@@ -167,7 +174,7 @@
     ['level', 'down'].forEach(function (which) {
       var tt = curveTime(CAL[which].curve, targetX);
       var cur = state.times[which];
-      var next = cur + (tt - cur) * EASE_PER_FRAME;
+      var next = cur + (tt - cur) * ease;
       state.times[which] = next;
       var visible = (which === 'down') ? state.blend > 0 : state.blend < 1;
       if (visible || state.dissolving) seekIfNeeded(which, next);
