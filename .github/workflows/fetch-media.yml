@@ -21,15 +21,35 @@ jobs:
         run: |
           echo "$MANIFEST" | python3 -c '
           import json, os, sys, urllib.request
+          def get(url, path):
+              req = urllib.request.Request(url, headers={"User-Agent": "Mozilla/5.0"})
+              with urllib.request.urlopen(req, timeout=300) as r, open(path, "wb") as f:
+                  f.write(r.read())
           items = json.load(sys.stdin)
+          failed = []
           for it in items:
               path = it["path"]
               assert ".." not in path and not path.startswith("/"), path
               os.makedirs(os.path.dirname(path) or ".", exist_ok=True)
-              req = urllib.request.Request(it["url"], headers={"User-Agent": "Mozilla/5.0"})
-              with urllib.request.urlopen(req, timeout=300) as r, open(path, "wb") as f:
-                  f.write(r.read())
-              print(path, os.path.getsize(path))
+              url = it["url"]
+              candidates = [url]
+              for a, b in ((".jpg", ".png"), (".png", ".jpg"), (".jpg", ".jpeg"), (".jpeg", ".jpg")):
+                  if url.endswith(a):
+                      candidates.append(url[: -len(a)] + b)
+              ok = False
+              for u in candidates:
+                  try:
+                      get(u, path)
+                      print("OK", path, os.path.getsize(path), u)
+                      ok = True
+                      break
+                  except Exception as e:
+                      print("FAIL", u, e)
+              if not ok:
+                  failed.append(url)
+                  if os.path.exists(path):
+                      os.remove(path)
+          print("failed_count", len(failed))
           '
       - name: Commit and push
         run: |
