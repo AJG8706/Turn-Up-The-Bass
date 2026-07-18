@@ -59,10 +59,14 @@
   }
 
   // ---- load clips as blobs so seeking never depends on range requests ----
-  function loadBlob(url, video) {
-    return fetch(url)
+  // Retries with a cache-busting query so one truncated CDN response (e.g.
+  // a fetch that raced a redeploy) can't permanently kill the stage.
+  function loadBlob(url, video, tries) {
+    tries = tries === undefined ? 2 : tries;
+    var u = tries < 2 ? url + '?r=' + Date.now() : url;
+    return fetch(u, tries < 2 ? { cache: 'reload' } : undefined)
       .then(function (r) {
-        if (!r.ok) throw new Error('fetch failed: ' + url + ' ' + r.status);
+        if (!r.ok) throw new Error('fetch failed: ' + u + ' ' + r.status);
         return r.blob();
       })
       .then(function (blob) {
@@ -70,8 +74,12 @@
           video.src = URL.createObjectURL(blob);
           video.muted = true;
           video.onloadedmetadata = function () { resolve(video); };
-          video.onerror = function () { reject(new Error('decode failed: ' + url)); };
+          video.onerror = function () { reject(new Error('decode failed: ' + u)); };
         });
+      })
+      .catch(function (err) {
+        if (tries > 0) return loadBlob(url, video, tries - 1);
+        throw err;
       });
   }
 
@@ -103,7 +111,8 @@
     idleGlanceDown: false,
     times: { level: 0, down: 0 },   // eased playhead per clip
     lastHiddenSync: 0,
-    ready: false
+    ready: false,
+    downReady: false                // down pose loads in the background
   };
 
   // exposed for automated verification
@@ -170,6 +179,7 @@
       else wantPose = state.pose;
     }
 
+    if (!state.downReady) wantPose = 'level'; // down take still downloading
     if (wantPose !== state.pose) requestPose(wantPose);
 
     // ease both playheads toward their curve targets. The visible layer is
@@ -222,13 +232,17 @@
   }
 
   // ---- boot ----
+  // Progressive: the poster background is already showing the scene. The
+  // level take goes live the moment it arrives; the down take streams in
+  // behind it and simply unlocks the look-down pose when ready. A total
+  // failure leaves the poster visible — the stage is never black.
   function boot() {
     var fmt = pickFormat();
     var base = 'assets/';
-    Promise.all([
-      loadBlob(base + 'level.' + fmt, vids.level),
-      loadBlob(base + 'down.' + fmt, vids.down)
-    ]).then(function () {
+    var hint = document.getElementById('loadHint');
+
+    loadBlob(base + 'level.' + fmt, vids.level).then(function () {
+      if (hint) hint.remove();
       if (fallbackMode) {
         state.mode = 'fallback';
         vids.down.style.display = 'none';
@@ -241,11 +255,9 @@
         return;
       }
       vids.level.pause();
-      vids.down.pause();
       state.times.level = curveTime(CAL.level.curve, 0.5);
       state.times.down = curveTime(CAL.down.curve, 0.5);
       seekIfNeeded('level', state.times.level);
-      seekIfNeeded('down', state.times.down);
       applyBlend(0);
       state.mode = 'tracking';
       state.lastMove = performance.now();
@@ -253,10 +265,21 @@
       window.addEventListener('mousemove', onMove, { passive: true });
       requestAnimationFrame(tick);
     }).catch(function (err) {
-      // last-resort: show the level clip as a still poster
-      console.warn('stage boot fell back:', err.message);
+      // poster stays up; the page degrades to a beautiful still
+      if (hint) hint.textContent = 'STILL FRAME MODE';
+      console.warn('stage boot fell back to poster:', err.message);
       state.mode = 'error';
     });
+
+    if (!fallbackMode) {
+      loadBlob(base + 'down.' + fmt, vids.down).then(function () {
+        vids.down.pause();
+        seekIfNeeded('down', curveTime(CAL.down.curve, 0.5));
+        state.downReady = true;
+      }).catch(function (err) {
+        console.warn('down take unavailable, level-only mode:', err.message);
+      });
+    }
   }
 
   boot();

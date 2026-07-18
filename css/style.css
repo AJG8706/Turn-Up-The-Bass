@@ -36,9 +36,24 @@ body {
   position: fixed;
   inset: 0;
   z-index: 0;
-  background: var(--bg);
+  /* instant scene: the poster is the same frame the clips initialize to,
+     so there is never a black stage while the videos download */
+  background: var(--bg) url('../assets/poster.jpg') center / cover no-repeat;
   overflow: hidden;
 }
+
+.load-hint {
+  position: absolute;
+  left: 18px;
+  bottom: 14px;
+  z-index: 2;
+  color: var(--dim);
+  text-shadow: 0 1px 8px rgba(0, 0, 0, .8);
+  animation: loadpulse 1.6s ease-in-out infinite;
+  pointer-events: none;
+}
+
+@keyframes loadpulse { 0%, 100% { opacity: .35; } 50% { opacity: .9; } }
 
 .stage-video {
   position: absolute;
