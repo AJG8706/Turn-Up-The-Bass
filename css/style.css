@@ -36,9 +36,9 @@ body {
   position: fixed;
   inset: 0;
   z-index: 0;
-  /* instant scene: the poster is the same frame the clips initialize to,
-     so there is never a black stage while the videos download */
-  background: var(--bg) url('../assets/poster.jpg') center / cover no-repeat;
+  /* the poster background-image is set inline per page (each variant has its
+     own poster frame) so there is never a black stage while clips download */
+  background: var(--bg) center / cover no-repeat;
   overflow: hidden;
 }
 

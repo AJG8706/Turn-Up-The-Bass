@@ -21,10 +21,11 @@
   // camera at t=2.2s), and the edges sit just inside the clip ends.
   // Clips are motion-interpolated from the 24fps masters to 60fps all-intra,
   // so the scrub can land on 16.7ms steps instead of 42ms ones.
-  var CAL = {
+  // Pages with their own takes (e.g. /wide/) override via window.TUBA_CAL.
+  var CAL = window.TUBA_CAL || {
     fps: 60,
-    level: { curve: [[0, 0.08], [0.15, 0.95], [0.5, 2.00], [1, 4.92]] },
-    down:  { curve: [[0, 0.08], [0.15, 0.90], [0.5, 2.20], [1, 4.92]] }
+    level: { curve: [[0, 0.08], [0.15, 0.70], [0.5, 1.60], [1, 4.92]] },
+    down:  { curve: [[0, 0.08], [0.15, 0.80], [0.5, 2.20], [1, 4.92]] }
   };
 
   var EASE_PER_FRAME = 0.09;      // fraction of remaining distance per 60Hz frame
@@ -118,6 +119,7 @@
   // exposed for automated verification
   window.__tuba = state;
   window.__tubaVids = vids;
+  window.__tubaCal = CAL;
 
   function frameDur() { return 1 / (CAL.fps || 24); }
 
