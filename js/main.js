@@ -19,8 +19,10 @@
   // travel. Screen-center is pinned to the measured straight-into-camera
   // frame (level t=2.0s; the down take faces the floor in front of the
   // camera at t=2.2s), and the edges sit just inside the clip ends.
+  // Clips are motion-interpolated from the 24fps masters to 60fps all-intra,
+  // so the scrub can land on 16.7ms steps instead of 42ms ones.
   var CAL = {
-    fps: 24,
+    fps: 60,
     level: { curve: [[0, 0.08], [0.15, 0.95], [0.5, 2.00], [1, 4.92]] },
     down:  { curve: [[0, 0.08], [0.15, 0.90], [0.5, 2.20], [1, 4.92]] }
   };
@@ -100,6 +102,7 @@
     idleStart: 0,
     idleGlanceDown: false,
     times: { level: 0, down: 0 },   // eased playhead per clip
+    lastHiddenSync: 0,
     ready: false
   };
 
@@ -169,15 +172,23 @@
 
     if (wantPose !== state.pose) requestPose(wantPose);
 
-    // ease both playheads toward their curve targets (hidden layer stays in
-    // sync so an incoming dissolve always shows the correct pose)
+    // ease both playheads toward their curve targets. The visible layer is
+    // seeked every frame; the hidden layer only needs to be roughly in place
+    // before a dissolve, so it syncs at ~10Hz — during a dissolve both run at
+    // full rate so the incoming pose is already correct before it shows.
+    var hiddenDue = now - state.lastHiddenSync > 100;
     ['level', 'down'].forEach(function (which) {
       var tt = curveTime(CAL[which].curve, targetX);
       var cur = state.times[which];
       var next = cur + (tt - cur) * ease;
       state.times[which] = next;
       var visible = (which === 'down') ? state.blend > 0 : state.blend < 1;
-      if (visible || state.dissolving) seekIfNeeded(which, next);
+      if (visible || state.dissolving) {
+        seekIfNeeded(which, next);
+      } else if (hiddenDue) {
+        seekIfNeeded(which, next);
+        state.lastHiddenSync = now;
+      }
     });
 
     // dissolve progression — snap to exactly 0 or 1 at the ends
