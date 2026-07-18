@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>TURN UP THE BASS — Tuba Steve, Wide Shot</title>
+<meta name="description" content="A living portrait of Tuba Steve — New Orleans sousaphone, neon, and brass. He watches your cursor.">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E%F0%9F%8E%BA%3C/text%3E%3C/svg%3E">
+<link rel="preload" href="../fonts/display.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="stylesheet" href="../css/style.css">
+</head>
+<body>
+  <!-- Fixed full-screen stage: two scrub-only video layers + grain + shade -->
+  <div class="stage" id="stage" aria-hidden="true" style="background-image:url('assets/poster.jpg')">
+    <video id="vidLevel" class="stage-video" muted playsinline preload="auto"></video>
+    <video id="vidDown"  class="stage-video is-hidden" muted playsinline preload="auto"></video>
+    <div class="stage-shade"></div>
+    <div class="stage-grain"></div>
+    <div class="load-hint mono" id="loadHint">LOADING THE NIGHT…</div>
+  </div>
+
+  <!-- Scrollable content over the stage -->
+  <main class="content">
+    <header class="masthead">
+      <div class="brand mono">TUBA STEVE ・ NEW ORLEANS, LA</div>
+      <nav class="mono nav-chips">
+        <button class="chip chip-btn accent" id="soundToggle" type="button">♪ SOUND ON</button>
+        <a class="chip" href="../">CLOSE-UP</a>
+        <a class="chip" href="#story">STORY</a>
+        <a class="chip" href="#bands">BANDS</a>
+        <a class="chip" href="#book">BOOK</a>
+      </nav>
+    </header>
+
+    <section class="hero">
+      <h1 class="headline"><span>TURN UP</span><span>THE BASS.</span></h1>
+      <p class="sub">He sees you. Move your cursor — Steve Glenn, <em>Tuba Steve</em>, is
+      watching from behind the glass, sousaphone on his shoulder, somewhere off
+      Frenchmen Street.</p>
+      <div class="chips mono">
+        <span class="chip">LIVE PORTRAIT</span>
+        <span class="chip">CURSOR-TRACKED</span>
+        <span class="chip accent">LAISSEZ LES BONS TEMPS ROULER</span>
+      </div>
+      <div class="scroll-hint mono">SCROLL ↓</div>
+    </section>
+
+    <section class="panel" id="story">
+      <h2 class="panel-title">THE MAN BEHIND THE HORN</h2>
+      <p><strong>Steve Glenn</strong> — <em>Tuba Steve</em> — has been putting air through
+      big brass since 1995. A Denver kid whose middle-school band just happened to need
+      somebody on the behemoth horn, he took the trade and never looked back. The nickname
+      stuck during his stint at the Lamont School of Music at the University of Denver,
+      and the horn eventually carried him south — for the past decade New Orleans has been
+      home.</p>
+      <p>These days he's one of the city's most reliable and energetic low-end men: on
+      stage with the James Martin Band, the New Orleans Jazz Orchestra, and the brass-roots
+      outfit Magnetic Ear, or rolling through the streets with the Jaywalkers second line
+      parade band. The horn has taken him around the world — in July 2022 he brought home
+      the Individual Performance Award from the Karel van Eerd Music Competition in
+      Den Bosch, Netherlands.</p>
+      <blockquote class="quote">"It is this positivity that drives me... keeps me enjoying
+      what I do; keeps me dancing when I play — because if I can't dance to it, I can't
+      expect anyone else to!"<span class="mono dim">— TUBA STEVE</span></blockquote>
+      <div class="chips mono">
+        <span class="chip">TUBA &amp; SOUSAPHONE ・ SINCE 1995</span>
+        <span class="chip">DENVER → NEW ORLEANS</span>
+        <span class="chip accent">DEN BOSCH AWARD ・ 2022</span>
+      </div>
+      <p class="mono dim" style="margin-top:18px">FIELD NOTE — the portrait is never playing. It is being <em>scrubbed</em>:
+      your cursor's position is mapped through a calibration curve onto two locked-off
+      cinema takes, frame by frame.</p>
+    </section>
+
+    <section class="panel" id="bands">
+      <h2 class="panel-title">THE COMPANY HE KEEPS</h2>
+      <div class="grid">
+        <div class="card">
+          <div class="mono accent">MAGNETIC EAR</div>
+          <p>Brass-roots originals — jazz, funk and Balkan turns from a six-piece with
+          Steve's sousaphone holding the floor. Hit ♪ SOUND ON to hear their
+          "587 Miles" behind this page.</p>
+        </div>
+        <div class="card">
+          <div class="mono accent">THE JAYWALKERS</div>
+          <p>The quintessential French Quarter second line parade band — weddings, jazz
+          funerals and everything worth marching for, parading in style since 2004.</p>
+        </div>
+        <div class="card">
+          <div class="mono accent">JAMES MARTIN BAND</div>
+          <p>Horn-driven New Orleans soul and funk — Tipitina's, WWOZ sessions, festival
+          stages, with Steve anchoring the bottom.</p>
+        </div>
+        <div class="card">
+          <div class="mono accent">NEW ORLEANS JAZZ ORCHESTRA</div>
+          <p>The city's big-band standard-bearer — Steve brings the parade tradition to
+          the concert hall.</p>
+        </div>
+      </div>
+      <p class="mono dim" style="margin-top:16px">MORE LISTENING —
+        <a class="dim" href="https://www.youtube.com/watch?v=jTp73GB8Snc" target="_blank" rel="noopener">JAMES MARTIN BAND LIVE FROM WWOZ (2019)</a> ・
+        <a class="dim" href="https://www.youtube.com/watch?v=tRRyk1YZufo" target="_blank" rel="noopener">MAGNETIC EAR AT BAYOU BOOGALOO (2018)</a>
+      </p>
+    </section>
+
+    <section class="panel" id="craft">
+      <h2 class="panel-title">BUILT FROM BRASS &amp; LIGHT</h2>
+      <div class="grid">
+        <div class="card">
+          <div class="mono accent">01 / THE SCENE</div>
+          <p>One photoreal frame — a New Orleans bar at night, neon spelling the old
+          invitation, shallow-focus brass catching the practicals.</p>
+        </div>
+        <div class="card">
+          <div class="mono accent">02 / THE MOTION</div>
+          <p>Two silent takes. A level pass where his gaze glides wall to wall, and a
+          down pass where he tracks something small along the floorboards.</p>
+        </div>
+        <div class="card">
+          <div class="mono accent">03 / THE MAGIC</div>
+          <p>No playback. Cursor X scrubs the timeline with weighted easing; cursor Y
+          dissolves between poses. Leave him alone and he'll look around on his own.</p>
+        </div>
+      </div>
+    </section>
+
+    <section class="panel" id="book">
+      <h2 class="panel-title">BOOK THE BASS</h2>
+      <p>Weddings, second lines, festival stages, late-night sets. If it needs a pulse,
+      it needs a sousaphone. Have an amazing project, want a quick chat, or just want to
+      say hi? Drop a message. 👋</p>
+      <p><a class="cta" href="mailto:tsc@turnupbassamplitude.com">BOOK TUBA STEVE →</a></p>
+      <div class="chips mono" style="margin-top:18px">
+        <a class="chip" href="https://www.turnupbassamplitude.com/" target="_blank" rel="noopener">TURNUPBASSAMPLITUDE.COM</a>
+        <a class="chip" href="https://instagram.com/2basteve" target="_blank" rel="noopener">IG @2BASTEVE</a>
+        <a class="chip" href="https://facebook.com/stevenglenn1" target="_blank" rel="noopener">FACEBOOK</a>
+        <a class="chip" href="http://www.secondlines.net/" target="_blank" rel="noopener">BOOK THE JAYWALKERS ・ 1-504-JAZZMAN</a>
+      </div>
+      <footer class="mono dim footer">© NEW ORLEANS ・ SHOT ON NEON ・ NO AUTOPLAY, ONLY ATTENTION<br>
+      MUSIC PLAYS VIA THE BANDS' OFFICIAL YOUTUBE EMBEDS — SUPPORT THE PLAYERS LIVE.<br>
+      VARIANTS — <a class="dim" href="../">CLOSE-UP</a> ・ <a class="dim" href="../v1/">ORIGINAL V1</a></footer>
+    </section>
+  </main>
+
+  <!-- jukebox: official Magnetic Ear embed, loaded only after the user asks for sound -->
+  <aside class="jukebox" id="jukebox" hidden>
+    <div class="jukebox-head mono">
+      <span class="accent">NOW SPINNING</span>
+      <button class="jukebox-close mono" id="jukeboxClose" type="button" aria-label="Stop music">✕</button>
+    </div>
+    <div class="jukebox-frame" id="jukeboxFrame"></div>
+    <div class="jukebox-caption mono dim">MAGNETIC EAR — "587 MILES"<br>STEVE'S BRASS-ROOTS BAND ・ OFFICIAL CHANNEL</div>
+  </aside>
+
+  <script>
+    // wide takes have their own measured gaze calibration
+    window.TUBA_CAL = {
+      fps: 60,
+      level: { curve: [[0, 0.08], [0.15, 0.90], [0.5, 2.10], [1, 4.92]] },
+      down:  { curve: [[0, 0.08], [0.15, 0.80], [0.5, 2.20], [1, 4.92]] }
+    };
+  </script>
+  <script src="../js/main.js"></script>
+  <script src="../js/jukebox.js"></script>
+</body>
+</html>
